@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'student',
-    'hotel'
+    'hotel',
+    'room',
+    'booking',
     'transaction',
 ]
 
@@ -56,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'traveller_nest.urls'
+ROOT_URLCONF = 'travel_nest.urls'
 
 TEMPLATES = [
     {
