@@ -7,19 +7,12 @@ class StudentInformation(models.Model):
       birth_date = models.DateField(null = True, blank=True)
       gender = models.CharField(max_length = 10, choices=constants.GENDER_TYPE)
       phone_no = models.IntegerField(unique=True)
+      account_no = models.IntegerField(unique=True)
+      balance = models.DecimalField(default=0, decimal_places=2, max_digits=10)
       
       def __str__(self):
-            return self.user.username
+            return f"{self.account_no}"
       
-      
-class StudentAddress(models.Model):
-      student = models.ForeignKey(StudentInformation, on_delete=models.CASCADE, related_name='address')
-      street_address = models.CharField(max_length = 100)
-      city = models.CharField(max_length = 50)
-      country = models.CharField(max_length = 50)
-      
-      def __str__(self):
-            return f"{self.student.user.username} - {self.city},{self.country}"
   
 class StudentInstitution(models.Model):
       student = models.ForeignKey(StudentInformation, on_delete=models.CASCADE, related_name='institution')
@@ -30,11 +23,4 @@ class StudentInstitution(models.Model):
       def __str__(self):
             return f"{self.institution_name} - {self.institution_type}"
       
-class StudentBankAccount(models.Model):
-      student = models.ForeignKey(StudentInformation, on_delete=models.CASCADE, related_name='bank_account')
-      bank_name = models.CharField(max_length = 50)
-      account_no = models.IntegerField(unique=True)
-      amount = models.DecimalField(default=0, decimal_places=2, max_digits=10)
       
-      def __str__(self):
-            return f"{self.account_no}"
