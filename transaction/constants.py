@@ -1,6 +1,0 @@
-TRANSACTION_TYPE = (
-      ('DEPOSIT', 'DEPOSIT'),
-      ('WiTHDRAW', 'WITHDRAW'),
-      ('PAY_RENT', 'PAY_RENT'),
-      ('RETURN_MONEY', 'RETURN_MONEY'),
-)
