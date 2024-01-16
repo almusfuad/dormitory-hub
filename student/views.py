@@ -70,6 +70,13 @@ class UserLoginView(APIView):
                   else:
                         return Response({'error': 'Invalid credentials.'})
             return Response(serializer.errors)   
+
+class UserLogoutView(APIView):
+      def get(self, request):
+            request.user.auth_token.delete()
+            logout(request)
+            # return Response({'message': 'Logout successful.'})
+            return redirect('login') 
       
 class BasicInformationView(APIView):
       def post(self, request, *args, **kwargs):
