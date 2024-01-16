@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'student',
     'dormitory',
     'booking',
+    'transaction',
 ]
 
 MIDDLEWARE = [

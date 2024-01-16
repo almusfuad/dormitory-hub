@@ -12,7 +12,7 @@ class BasicInformation(models.Model):
       city = models.CharField(max_length = 30)
       postal_code = models.CharField(max_length = 6)
       account_no = models.CharField(max_length = 11, editable=False)
-      balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0, editable=False)
+      balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0, editable=True)
       
       def __str__(self):
             return f'{self.account_no} - {self.user.first_name} | balance: {self.balance}'
@@ -24,10 +24,6 @@ class BasicInformation(models.Model):
                   remaining_digits = self.phone_no[1:]
                   random_digit = str(random.randint(0, 9))
                   self.account_no = f"{remaining_digits}{random_digit}"
-                  
-            if self.pk:
-                  original_instance = BasicInformation.objects.get(pk=self.pk)
-                  self.balance = original_instance.balance
             super().save(*args, **kwargs)
 
 

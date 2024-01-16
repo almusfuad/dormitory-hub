@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('student.urls')),
     path('dormitory/', include('dormitory.urls')),
+    path('transactions/', include('transaction.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL)
