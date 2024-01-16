@@ -19,7 +19,7 @@ class BasicInformation(models.Model):
       
       def save(self, *args, **kwargs):
             if not self.account_no:
-                  if len(self.phone_no) < 11:
+                  if len(self.phone_no) < 11 and len(self.phone_no) > 11:
                         raise ValueError('Phone number must be 11 digits.')
                   remaining_digits = self.phone_no[1:]
                   random_digit = str(random.randint(0, 9))
@@ -29,6 +29,6 @@ class BasicInformation(models.Model):
 class InstitutionInformation(models.Model):
       student = models.OneToOneField(BasicInformation, on_delete = models.CASCADE)
       institution_type = models.CharField(choices=[('school', 'School'), ('college', 'College'), ('university', 'University')],
-                                       max_length=20)
+                              max_length=20)
       institution_name = models.CharField(max_length = 100)
       institution_address = models.CharField(max_length = 100)
