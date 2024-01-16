@@ -78,10 +78,44 @@ class UserLogoutView(APIView):
             # return Response({'message': 'Logout successful.'})
             return redirect('login') 
       
-class BasicInformationView(APIView):
-      def post(self, request, *args, **kwargs):
-            serializer = serializers.BasicInformationSerializer(data = request.data)
-            if serializer.is_valid():
-                  serializer.save(user = request.user)
-                  return Response({'message': 'Information updated successfully.'})
-            return Response(serializer.errors)
+# class BasicInformationView(APIView):
+#       def put(self, request, *args, **kwargs):
+#             user = self.request.user
+#             basic_info = models.BasicInformation.objects.get(user = user)
+            
+#             serializer = serializers.BasicInformationSerializer(basic_info, data = request.data, partial = True)
+            
+#             if serializer.is_valid():
+#                   serializer.save()
+#                   return Response(serializer.data, {'information updated successful.'})
+#             return Response(serializer.errors, 'Information updated failed.')
+
+class BasicInformationViewSet(viewsets.ModelViewSet):
+      queryset = models.BasicInformation.objects.all()
+      serializer_class = serializers.BasicInformationSerializer
+      
+      def get_queryset(self):
+            return models.BasicInformation.objects.filter(user = self.request.user)
+      
+      def perform_create(self, serializer):
+            serializer.save(user = self.request.user)
+            
+      def perform_update(self, serializer):
+            serializer.save(user = self.request.user)
+            
+      # def perform_destroy(self, instance):
+      #       instance.delete()
+            
+      def create(self, request, *args, **kwargs):
+            try:
+                  response = super().create(request, *args, **kwargs)
+                  return Response(response.data, status = response.status_code)
+            except Exception as e:
+                  return Response({'error': str(e)}, status = getattr(e, 'status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))
+
+      def update(self, request, *args, **kwargs):
+            try:
+                  response = super().update(request, *args, **kwargs)
+                  return Response(response.data, status = response.status_code)
+            except Exception as e:
+                  return Response({'error': str(e)}, status = getattr(e, 'status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))

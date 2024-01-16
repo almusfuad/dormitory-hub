@@ -11,24 +11,33 @@ class BasicInformation(models.Model):
       street_address = models.CharField(max_length = 100)
       city = models.CharField(max_length = 30)
       postal_code = models.CharField(max_length = 6)
-      account_no = models.CharField(max_length = 11)
-      balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)
+      account_no = models.CharField(max_length = 11, editable=False)
+      balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0, editable=False)
       
       def __str__(self):
-            return f'{self.account_no} - {self.user.first_name}'
+            return f'{self.account_no} - {self.user.first_name} | balance: {self.balance}'
       
       def save(self, *args, **kwargs):
             if not self.account_no:
-                  if len(self.phone_no) < 11 and len(self.phone_no) > 11:
+                  if len(self.phone_no) != 11:
                         raise ValueError('Phone number must be 11 digits.')
                   remaining_digits = self.phone_no[1:]
                   random_digit = str(random.randint(0, 9))
                   self.account_no = f"{remaining_digits}{random_digit}"
+                  
+            if self.pk:
+                  original_instance = BasicInformation.objects.get(pk=self.pk)
+                  self.balance = original_instance.balance
             super().save(*args, **kwargs)
-      
+
+
+    
 class InstitutionInformation(models.Model):
       student = models.OneToOneField(BasicInformation, on_delete = models.CASCADE)
       institution_type = models.CharField(choices=[('school', 'School'), ('college', 'College'), ('university', 'University')],
                               max_length=20)
       institution_name = models.CharField(max_length = 100)
       institution_address = models.CharField(max_length = 100)
+      
+      def __str__(self):
+            return f'{self.student.user.first_name} - {self.student.phone_no} - {self.institution_name}'
