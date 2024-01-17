@@ -33,7 +33,7 @@ class DepositSerializer(serializers.ModelSerializer):
             
             # create transaction
             transaction = models.Transaction(
-                   account=account,
+                   account=account.account_no,
                    amount=amount,
                    transaction_type='deposit',
                    balance_after_transaction = balance_after_transaction,
@@ -77,7 +77,7 @@ class WithdrawSerializer(serializers.ModelSerializer):
             account.save()
             
             transaction = models.Transaction(
-                  account=account,
+                  account=account.account_no,
                   amount=amount,
                   transaction_type='withdraw',
                   balance_after_transaction = balance_after_transaction,

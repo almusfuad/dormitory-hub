@@ -24,6 +24,7 @@ urlpatterns = [
     path('user/', include('student.urls')),
     path('dormitory/', include('dormitory.urls')),
     path('transactions/', include('transaction.urls')),
+    path('bookings/', include('booking.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL)
