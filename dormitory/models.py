@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Location(models.Model):
@@ -22,3 +23,18 @@ class Dormitory(models.Model):
       
       def __str__(self):
             return f"{self.name} {self.location.location}"
+      
+      
+class Review(models.Model):
+      RATING_CHOICES = (
+        (1, '1 star'),
+        (2, '2 stars'),
+        (3, '3 stars'),
+        (4, '4 stars'),
+        (5, '5 stars'),
+    )
+      
+      dormitory = models.ForeignKey(Dormitory, on_delete=models.CASCADE, name = 'dormitory')
+      reviewer = models.ForeignKey(User, on_delete=models.CASCADE, name = 'reviewer')
+      rating = models.PositiveIntegerField(choices = RATING_CHOICES)
+      comment = models.TextField()

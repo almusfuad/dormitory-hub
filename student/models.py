@@ -15,7 +15,7 @@ class BasicInformation(models.Model):
       balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0, editable=True)
       
       def __str__(self):
-            return f'{self.account_no} - {self.user.first_name}'
+            return f'{self.phone_no} - {self.user.first_name}'
       
       def save(self, *args, **kwargs):
             if not self.account_no:

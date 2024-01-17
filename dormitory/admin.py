@@ -9,3 +9,4 @@ class DormitoryAdmin(admin.ModelAdmin):
       
 admin.site.register(models.Location, LocationAdmin)
 admin.site.register(models.Dormitory, DormitoryAdmin)
+admin.site.register(models.Review)

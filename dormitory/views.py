@@ -1,17 +1,17 @@
 from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import views, viewsets, response, generics
 from . import models
 from . import serializers
+from .permissions import IsReviewOwner, IsStayed
 
 # Create your views here.
-class LocationListView(APIView):
+class LocationListView(views.APIView):
       def get(self, request, format = None):
             locations = models.Location.objects.all()
             serializer = serializers.LocationSerializer(locations, many = True)
-            return Response(serializer.data)
+            return response.Response(serializer.data)
       
-class DormitoryListView(APIView):
+class DormitoryListView(views.APIView):
       def get(self, request, format=None):
             location_slug = self.request.query_params.get('location')
             dormitory_type = self.request.query_params.get('type')
@@ -25,7 +25,7 @@ class DormitoryListView(APIView):
                         location = models.Location.objects.get(slug=location_slug)
                         dormitories = dormitories.filter(location=location)
                   except models.Location.DoesNotExist:
-                        return Response({'error': 'Location not found.'})
+                        return response.Response({'error': 'Location not found.'})
 
             if dormitory_type:
                   dormitories = dormitories.filter(dormitory_type=dormitory_type)
@@ -35,10 +35,21 @@ class DormitoryListView(APIView):
 
             serializer = serializers.DormitoryListSerializer(dormitories, many=True)
 
-            return Response(serializer.data)
+            return response.Response(serializer.data)
       
-class DormitoryDetailsView(APIView):
+class DormitoryDetailsView(views.APIView):
       def get(self, request, slug, format = None):
             dormitory = models.Dormitory.objects.get(slug = slug)
             serializer = serializers.DormitoryDetailsSerializer(dormitory)
-            return Response(serializer.data)
+            return response.Response(serializer.data)
+      
+      
+class ReviewListCreateView(generics.ListCreateAPIView):
+      queryset = models.Review.objects.all()
+      serializer_class = serializers.ReviewSerializer
+      # permission_classes = [IsStayed]
+      
+class ReviewRUDView(generics.RetrieveDestroyAPIView):
+      queryset = models.Review.objects.all()
+      serializer_class = serializers.ReviewSerializer
+      permission_classes = [IsReviewOwner]
