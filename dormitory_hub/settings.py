@@ -32,11 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://dormitory-hub.onrender.com/', 'https://*.127.0.0.1']
-CORS_ALLOWED_ORIGINS = [
-    "https://dormitory-hub.onrender.com",
-    'https://*.127.0.0.1',  # Adjust the port if necessary
-    # Add any other allowed origins here
-]
 
 
 # Application definition
@@ -68,6 +63,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://dormitory-hub.onrender.com",
+    'https://*.127.0.0.1',  # Adjust the port if necessary
+    # Add any other allowed origins here
+]
+
 
 ROOT_URLCONF = 'dormitory_hub.urls'
 
