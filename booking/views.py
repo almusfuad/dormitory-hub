@@ -2,10 +2,24 @@ from django.shortcuts import render
 from rest_framework import generics, permissions, response, status
 from django.shortcuts import get_object_or_404
 # Create your views here.
-
-
+from transaction.views import send_transaction_email
 from . import models
 from . import serializers
+
+# email sending
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+def send_booking_status_email(user, status, subject, template):
+      # sending auto email to user
+      message = render_to_string(template, {
+            'user': 'user',
+            'status': 'status',
+      })
+      send_email = EmailMultiAlternatives(subject, '', to = [user.email])
+      send_email.attach_alternative(message, "text/html")
+      send_email.send()
+
 
 class BookingCreateView(generics.CreateAPIView):
       serializer_class = serializers.BookingSerializer
@@ -49,6 +63,11 @@ class BookingCreateView(generics.CreateAPIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             
+            # booking confirmation email
+            booking_subject = "Booking Confirmation"
+            booking_template = 'booking_confirmation_email_template.html'
+            send_booking_status_email(user, 'booked', booking_subject, booking_template)
+            
             headers = self.get_success_headers(serializer.data)
             return response.Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
 
@@ -61,3 +80,17 @@ class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
       queryset = models.Booking.objects.all()
       serializer_class = serializers.BookingSerializer
       permission_classes = [permissions.IsAuthenticated]
+      
+      
+      def perform_update(self, serializer):
+            old_status = self.get_object().status
+            new_status = self.request.data.get('status')
+            
+            # perform the update
+            serializer.save()
+            
+            # checking of status change
+            if old_status != new_status:
+                  user = self.request.user
+                  subject = "Booking Status Update"
+                  template = 'booking_status_email_template.html'

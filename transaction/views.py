@@ -6,6 +6,18 @@ from rest_framework.permissions import IsAuthenticated
 from . import models
 from . import serializers
 
+# sending email
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+def send_transaction_email(user, amount, subject, template):
+      message = render_to_string(template, {
+            'user': 'user',
+            'amount': 'amount',
+      })
+      send_email = EmailMultiAlternatives(subject, '', to = [user.email])
+      send_email.attach_alternative(message, "text/html")
+      send_email.send()
 
 # Create your views here.
 class DepositWithdrawAPIView(APIView):
@@ -20,6 +32,14 @@ class DepositWithdrawAPIView(APIView):
             
             if serializer.is_valid():
                   serializer.save()
+                  
+                  # Send transaction email to the user
+                  user = request.user
+                  amount = request.data.get('amount')
+                  subject = 'Transaction Update'
+                  template = 'transaction_update_email_template.html'
+                  send_transaction_email(user, amount, transaction_type, subject, template)
+                  
                   return Response(serializer.data, status = status.HTTP_201_CREATED)
             else:
                   return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
