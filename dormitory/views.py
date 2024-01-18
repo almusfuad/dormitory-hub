@@ -38,8 +38,9 @@ class DormitoryListView(views.APIView):
             return response.Response(serializer.data)
       
 class DormitoryDetailsView(views.APIView):
-      def get(self, request, slug, format = None):
-            dormitory = models.Dormitory.objects.get(slug = slug)
+      def get(self, request, *args, **kwargs):
+            dormitory_id = kwargs.get('id')
+            dormitory = models.Dormitory.objects.get(id=dormitory_id)
             serializer = serializers.DormitoryDetailsSerializer(dormitory)
             return response.Response(serializer.data)
       
