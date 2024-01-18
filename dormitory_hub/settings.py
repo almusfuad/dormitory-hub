@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["dormitory-hub.onrender.com", "*.127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ['https://dormitory-hub.onrender.com/', 'https://*.127.0.0.1']
 
 
@@ -65,11 +65,12 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://dormitory-hub.onrender.com",
-    'https://*.127.0.0.1',  # Adjust the port if necessary
-    # Add any other allowed origins here
+    'https://*.127.0.0.1',
 ]
 
 
