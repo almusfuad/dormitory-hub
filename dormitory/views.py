@@ -60,4 +60,4 @@ class DormitoryReviewListView(generics.ListAPIView):
       
       def get_queryset(self):
             dormitory_id = self.kwargs['dormitory_id']
-            return Review.objects.filter(dormitory_id=dormitory_id)
+            return models.Review.objects.filter(dormitory_id=dormitory_id)
