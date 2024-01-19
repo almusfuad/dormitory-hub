@@ -54,3 +54,10 @@ class ReviewRUDView(generics.RetrieveDestroyAPIView):
       queryset = models.Review.objects.all()
       serializer_class = serializers.ReviewSerializer
       permission_classes = [IsReviewOwner]
+      
+class DormitoryReviewListView(generics.ListAPIView):
+      serializer_class = serializers.ReviewSerializer
+      
+      def get_queryset(self):
+            dormitory_id = self.kwargs['dormitory_id']
+            return Review.objects.filter(dormitory_id=dormitory_id)

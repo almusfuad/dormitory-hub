@@ -6,5 +6,6 @@ urlpatterns = [
       path('list/', views.DormitoryListView.as_view(), name = 'dormitory-list'),
       path('list/<int:id>/', views.DormitoryDetailsView.as_view(), name = 'dormitory-details'),
       path('reviews/', views.ReviewListCreateView.as_view(), name = 'review-list'),
-      path('reviews/<int:id>/', views.ReviewRUDView.as_view(), name = 'review-rud')
+      path('reviews/<int:id>/', views.ReviewRUDView.as_view(), name = 'review-rud'),
+      path('/<int:id>/reviews/', views.DormitoryReviewListView.as_view(), name = 'dormitory_reviews'),
 ]
