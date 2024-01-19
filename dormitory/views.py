@@ -59,5 +59,5 @@ class DormitoryReviewListView(generics.ListAPIView):
       serializer_class = serializers.ReviewSerializer
       
       def get_queryset(self):
-            dormitory_id = self.kwargs['dormitory_id']
-            return models.Review.objects.filter(dormitory_id=dormitory_id)
+            dormitory_id = self.kwargs['id']
+            return models.Review.objects.filter(dormitory__id=dormitory_id)
