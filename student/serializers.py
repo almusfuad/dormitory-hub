@@ -33,55 +33,50 @@ class UserLoginSerializer(serializers.Serializer):
       
 # codes for update the information after successfully logged in    
 class UserSerializer(serializers.ModelSerializer):
-      class Meta:
-            model = User
-            fields = ['first_name', 'last_name']
-
-class InstitutionInformationSerializer(serializers.ModelSerializer):
-      class Meta:
-            model = models.InstitutionInformation
-            fields = ['institution_name', 'institution_type', 'institution_address']
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
 
 class BasicInformationSerializer(serializers.ModelSerializer):
       user = UserSerializer()
-      institution_information = InstitutionInformationSerializer(allow_null=True, required=False)
 
       class Meta:
             model = models.BasicInformation
-            exclude = ['balance']
+            fields = '__all__'
             
       account_no = serializers.CharField(read_only=True)
+      balance = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
 
       def create(self, validated_data):
-            user_data = self.context['request'].user
-            institution_information_data = validated_data.pop('institution_information', None)
-
-            # Include the user data in the validated_data
-            validated_data['user'] = user_data
-
-            try:
-                  # Create the basic information instance
-                  basic_info = models.BasicInformation.objects.create(**validated_data)
-
-                  # Create the institution information instance if data is provided
-                  if institution_information_data is not None:
-                        institution_info = models.InstitutionInformation.objects.create(student=basic_info, **institution_information_data)
-                        basic_info.institution_information = institution_info
-
-                  return basic_info
-
-            except IntegrityError as e:
-                  # Handle the IntegrityError for the unique constraint on phone_no
-                  raise serializers.ValidationError({'phone_no': ['Basic information with this phone no already exists.']})
-            
-      
-      def update(self, instance, validated_data):
             user_data = validated_data.pop('user', {})
-            institution_information_data = validated_data.pop('institution_information', None)
+            institution_type_data = validated_data.pop('institution_type', None)
+            institution_name_data = validated_data.pop('institution_name', None)
+            institution_address_data = validated_data.pop('institution_address', None)
+
+            user_serializer = UserSerializer(data=user_data)
+            user_serializer.is_valid(raise_exception=True)
+            user_instance = user_serializer.save()
+
+            basic_info = BasicInformation.objects.create(user=user_instance, **validated_data)
+
+            # Create the institution information instance if data is provided
+            if institution_type_data and institution_name_data and institution_address_data:
+                  basic_info.institution_type = institution_type_data
+                  basic_info.institution_name = institution_name_data
+                  basic_info.institution_address = institution_address_data
+                  basic_info.save()
+
+            return basic_info
+
+            def update(self, instance, validated_data):
+                  user_data = validated_data.pop('user', {})
+                  institution_type_data = validated_data.pop('institution_type', None)
+                  institution_name_data = validated_data.pop('institution_name', None)
+                  institution_address_data = validated_data.pop('institution_address', None)
 
             # Update the user instance
-            user = instance.user
-            user_serializer = UserSerializer(user, data=user_data, partial=True)
+            user_instance = instance.user
+            user_serializer = UserSerializer(user_instance, data=user_data, partial=True)
             user_serializer.is_valid(raise_exception=True)
             user_serializer.save()
 
@@ -90,11 +85,17 @@ class BasicInformationSerializer(serializers.ModelSerializer):
             instance.save()
 
             # Update or create institution information
-            if institution_information_data is not None:
-                  institution_info, created = models.InstitutionInformation.objects.get_or_create(
-                  student=instance, defaults=institution_information_data
-                  )
+            if institution_type_data and institution_name_data and institution_address_data:
+                  instance.institution_type = institution_type_data
+                  instance.institution_name = institution_name_data
+                  instance.institution_address = institution_address_data
+                  instance.save()
 
-            # Include the serialized data for InstitutionInformation and User in the response
-            serializer = self.__class__(instance=instance)
-            return serializer.data
+            return instance
+
+
+class UserAllSerializer(serializers.ModelSerializer):
+      basicinformation = BasicInformationSerializer()
+      class Meta:
+            model = User
+            fields = ['username', 'email', 'first_name', 'last_name', 'basicinformation']
