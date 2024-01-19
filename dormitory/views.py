@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import views, viewsets, response, generics
+from rest_framework import views, viewsets, response, generics, mixins
 from . import models
 from . import serializers
 from .permissions import IsReviewOwner, IsStayed
@@ -44,20 +44,34 @@ class DormitoryDetailsView(views.APIView):
             serializer = serializers.DormitoryDetailsSerializer(dormitory)
             return response.Response(serializer.data)
       
-      
-class ReviewListCreateView(generics.ListCreateAPIView):
-      queryset = models.Review.objects.all()
-      serializer_class = serializers.ReviewSerializer
-      # permission_classes = [IsStayed]
-      
-class ReviewRUDView(generics.RetrieveDestroyAPIView):
-      queryset = models.Review.objects.all()
-      serializer_class = serializers.ReviewSerializer
-      permission_classes = [IsReviewOwner]
-      
 class DormitoryReviewListView(generics.ListAPIView):
       serializer_class = serializers.ReviewSerializer
       
       def get_queryset(self):
             dormitory_id = self.kwargs['id']
             return models.Review.objects.filter(dormitory__id=dormitory_id)
+      
+class DormitoryReviewCreateView(generics.CreateAPIView):
+      serializer_class = serializers.ReviewSerializer
+      permission_classes = [IsStayed]
+      
+      def perform_create(self, serializer):
+            dormitory_id = self.kwargs.get('id')
+            dormitory = models.Dormitory.objects.get(id = dormitory_id)
+            user = self.request.user
+            serializer.save(reviewer = user, dormitory=dormitory)
+            
+
+      
+class DormitoryReviewUpdateView(generics.RetrieveUpdateAPIView):
+      serializer_class = serializers.ReviewSerializer
+      permission_classes = [IsStayed]
+      lookup_field = 'id'
+      
+      def get_queryset(self):
+            dormitory_id = self.kwargs['id']
+            return models.Review.objects.filter(dormitory__id = dormitory_id)
+      
+      def perform_update(self, serializer):
+            serializer.save(reviewer=self.request.user)
+      

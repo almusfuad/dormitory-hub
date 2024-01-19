@@ -8,13 +8,18 @@ class IsReviewOwner(permissions.BasePermission):
 
 
 class IsStayed(permissions.BasePermission):
+      message = "You must have a booking to create or update a review for this dormitory."
       def has_permission(self, request, view):
+            if request.method == 'POST':
+                  user = request.user
+                  dormitory_id = view.kwargs.get('id')
+                  print(f"dormitory id: {dormitory_id}")
+                  if not dormitory_id:
+                        return False
+                  
+                  # check for the booking records of the user and dormitory
+                  booking_exists = Booking.objects.filter(student__user = user, dormitory__id = dormitory_id).exists()
+                  
+                  return booking_exists
+            return True
             
-            booking = Booking.objects.get(student=request.user.basicinformation)
-            
-
-            # try:
-            #       return booking.status == 'checkedout' # If the user has checked out he have stayed
-            # except Booking.DoesNotExist:
-            #       return False
-            # return False
