@@ -116,7 +116,8 @@ class UserAllAPIView(APIView):
       def get(self, request, *args, **kwargs):
             try:
                   # Retrieve the User object
-                  user = request.user
+                  user_id = kwargs.get('id')
+                  user = User.objects.get(pk=user_id)
 
                   serializer = serializers.UserAllSerializer(user)
 
