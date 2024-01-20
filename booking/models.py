@@ -16,6 +16,24 @@ class Booking(models.Model):
       total_cost = models.IntegerField(default=0)
       status = models.CharField(choices=[('booked', 'Booked'), ('checkedin', 'Checked In'), ('checkedout', 'Checked Out')], max_length=20, default='booked')
       
+      def save(self, *args, **kwargs):
+            # calculation for number of days
+            if self.number_of_days > 0 and self.number_of_seats > 0:
+                  self.total_cost = (
+                        self.number_of_days * 
+                        self.number_of_seats * 
+                        self.dormitory.cost_per_night
+                  )
+            # calculation for number of months
+            elif self.number_of_seats > 0 and self.number_of_months > 0:
+                  self.total_cost = (
+                        self.number_of_seats * 
+                        self.number_of_months * 
+                        self.dormitory.cost_per_month
+                  )
+            super().save(*args, **kwargs)
+                  
+      
       class Meta:
             ordering = ['date_of_booking']
       

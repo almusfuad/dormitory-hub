@@ -11,7 +11,7 @@ class BasicInformation(models.Model):
       street_address = models.CharField(max_length = 100)
       city = models.CharField(max_length = 30)
       postal_code = models.CharField(max_length = 6)
-      account_no = models.CharField(max_length = 11, editable=False)
+      account_no = models.CharField(max_length = 11, editable=False, unique=True)
       balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0, editable=True)
       institution_type = models.CharField(choices=[('school', 'School'), ('college', 'College'), ('university', 'University')],
                               max_length=20, default='university')

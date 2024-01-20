@@ -48,6 +48,10 @@ class BookingSerializer(serializers.ModelSerializer):
             if instance.total_cost > instance.student.balance:
                   raise serializers.ValidationError('Insufficient balance.')
             
+            # checking available seats
+            if instance.number_of_seats > instance.dormitory.available_seats:
+                  raise serializers.ValidationError("Insufficient available seats.")
+            
             instance.student.balance -= instance.total_cost
             instance.dormitory.available_seats -= instance.number_of_seats
             instance.student.save()
@@ -63,3 +67,4 @@ class BookingSerializer(serializers.ModelSerializer):
                   transaction_type='booking',
                   balance_after_transaction = instance.student.balance,     
             )
+            return transaction

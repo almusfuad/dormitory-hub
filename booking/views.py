@@ -65,7 +65,7 @@ class BookingCreateView(generics.CreateAPIView):
             
             # booking confirmation email
             booking_subject = "Booking Confirmation"
-            booking_template = 'booking_confirmation_email_template.html'
+            booking_template = 'booking_status_email_template.html'
             send_booking_status_email(user, 'booked', booking_subject, booking_template)
             
             headers = self.get_success_headers(serializer.data)
