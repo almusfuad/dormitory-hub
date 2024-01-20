@@ -38,7 +38,7 @@ class DepositWithdrawAPIView(APIView):
                   amount = request.data.get('amount')
                   subject = 'Transaction Update'
                   template = 'transaction_update_email_template.html'
-                  send_transaction_email(user, amount, transaction_type, subject, template)
+                  send_transaction_email(user, amount, subject, template)
                   
                   return Response(serializer.data, status = status.HTTP_201_CREATED)
             else:
