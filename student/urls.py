@@ -17,4 +17,6 @@ app_name = 'student'
 
 urlpatterns = [
       path('register/', views.RegisterAPIView.as_view(), name = 'register'),
+      path('activate/<uid64>/<token>/', views.activate, name = 'activate'),
+      path('login/', views.LoginApiView.as_view(), name = 'login'),
 ]

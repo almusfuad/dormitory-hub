@@ -31,5 +31,16 @@
 <!-- Bootstrap 3 JS and dependencies -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        var alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach((alert) => {
+            setTimeout(() => {
+                alert.classList.remove('in');
+            }, 3000);
+        });
+    });
+</script>
 </body>
 </html>

@@ -32,32 +32,76 @@
 {% block content %}
 <div class="container-form">
     <h2>User Registration</h2>
-    <form>
+    <form id="registration-form" method="POST" action="{% url 'student:register' %}" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter username">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter email">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter password">
+            <label for="first_name">First Name:</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name">
+        </div>
+        
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name">
         </div>
         <div class="form-group">
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" class="form-control" id="confirm_password" placeholder="Confirm password">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+            <p class="error-message" id="password-error"></p>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm password">
+            <p class="error-message" id="confirm-password-error"></p>
         </div>
         <div class="form-group">
             <label for="phone_no">Phone Number</label>
-            <input type="text" class="form-control" id="phone_no" placeholder="Enter phone number">
+            <input type="text" class="form-control" id="phone_no" name="phone_no" placeholder="Enter phone number">
         </div>
         <div class="form-group">
-            <label for="image">Profile Image</label>
-            <input type="file" id="image">
+            <label for="image">Profile Image:</label>
+            <input type="file" id="image" name="image">
         </div>
         <button type="submit" class="btn btn-primary">Register</button>
     </form>
 </div>
+
+
+<script>
+    document.getElementById('registration-form').addEventListener('submit', (event) => {
+        var password = document.getElementById('password').value;
+        var confirm_password = document.getElementById('confirm_password').value;
+        var passwordError = document.getElementById('password_error');
+        var confirmPassError = document.getElementById('confirm_password_error');
+        var isValid = true;
+
+        if (password.length < 8) {
+            passwordError.innerHTML = 'Your password must be at least 8 characters long';
+            isValid = false;
+        } else {
+            passwordError.innerHTML = '';
+        }
+
+        if (password !== confirm_password) {
+            confirmPassError.innerHTML = 'Passwords do not match';
+            isValid = false;
+        } else {
+            confirmPassError.innerHTML = '';
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        } else {
+            // If form submission is successful, reset the form
+            document.getElementById('registration-form').reset();
+        }
+    });
+</script>
 {% endblock %}

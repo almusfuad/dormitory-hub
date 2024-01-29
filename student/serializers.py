@@ -1,46 +1,59 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import BasicInformation
+from .models import Student
+from django.contrib.auth import authenticate
 
 
-class UserSerializer(serializers.ModelSerializer):
+class StudentSerializer(serializers.ModelSerializer):
+      class Meta:
+            model = Student
+            fields = ['user', 'image', 'phone_no', 'account_no', 'slug']
+
+class RegistrationSerializer(serializers.ModelSerializer):
+      confirm_password = serializers.CharField(required=True)
       class Meta:
             model = User
-            fields = {'username', 'email', 'first_name', 'last_name', 'password'}
-            extra_kwargs = {'password': {'write_only': True}}
+            fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
             
-      def create(self, validated_data):
-            validated_data['is_active'] = False
-            user = User.objects.create_user(**validated_data)
-            return user
-      
-class BasicInformationSerializer(serializers.ModelSerializer):
-      user = UserSerializer()
-      account_no = serializers.CharField(max_length = 12, read_only = True)
-      balance = serializers.DecimalField(max_digits = 10, decimal_places = 2, default = 0, read_only = True)
-      
-      class Meta:
-            model = BasicInformation
-            fields = {'user', 'image', 'phone_no'}
+      def save(self):
+            username = self.validated_data['username']
+            first_name = self.validated_data['first_name']
+            last_name = self.validated_data['last_name']
+            email = self.validated_data['email']
+            password = self.validated_data['password']
+            password2 = self.validated_data['confirm_password']
             
-      def create(self, validated_data):
-            user_data = validated_data.pop('user')
-            user = User.objects.create_user(**user_data)
-            account_no = 1000 + user.id
-            basic_info = BasicInformation.objects.create(user = user, account_no=account_no, **validated_data)
-            return basic_info
-      
-      def update(self, instance, validated_data):
-            user_data = validated_data.pop('user')
-            user = instance.user
-            instance.image = validated_data.get('image', instance.image)
-            instance.phone_no = validate_data.get('phone_no', instance.phone_no)
-            instance.save()
+            if password != password2:
+                  raise serializers.ValidationError({'error': 'Password does not match'})
+            if User.objects.filter(email = email).exists():
+                  raise serializers.ValidationError({'error': 'Email already exists'})
+            if User.objects.filter(username=username).exists():
+                  raise serializers.ValidationError({'error': 'Username already exists'})
             
-            user.username = user_data.get('username', user.username)
-            user.email = user_data.get('email', user.email)
-            user.set_password(user_data.get('password', user.password))
-            user.save()
-            return instance
-
-
+            account = User(username=username, first_name=first_name, last_name=last_name, email=email)
+            account.set_password(password)
+            account.is_active = False
+            account.save()
+            return account
+      
+class LoginSerializer(serializers.Serializer):
+      email = serializers.EmailField(required=True)
+      password = serializers.CharField(required=True)
+            
+      def validate(self, data):
+            email = data.get('email')
+            password = data.get('password')
+            
+            if email and password:
+                  user = authenticate(email = email, password = password)
+            
+                  if not user:
+                        raise serializers.ValidationError('Invalid email or password')
+                  
+                  if not user.is_active:
+                        raise serializers.ValidationError('User account is not active')
+            else:
+                  raise serializers.ValidationError('Both email and password are required')
+            
+            return data
+            
