@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <!-- Bootstrap 3 CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    {% block css %}
+    <style>
+        body {
+            background-color: #c4ea9b;
+            font-family: Arial, sans-serif;
+        }    
+    </style>
+    {% endblock %}
+</head>
+<body>
+
+{% include 'navbar.html' %}
+{% include 'messages.html' %}
+
+{% block content %}
+
+{% endblock %}
+
+<!-- Bootstrap 3 JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
