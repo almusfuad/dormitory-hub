@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Dormitory Hub{% endblock %}
+{% block css %}
+<style>
+  .slider-container-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    position: relative; /* Make the position of navigation arrows relative to this container */
+    margin-bottom: 20px; /* Add some bottom margin for better spacing */
+  }
+
+  .slider-container {
+    display: inline-flex; /* Ensure cards are displayed horizontally */
+    padding: 10px;
+  }
+
+  .card {
+    flex: 0 0 auto; /* Allow cards to shrink and grow as needed */
+    max-width: 200px; /* Limit card width */
+    margin: 10px;
+  }
+
+  .card-img-top {
+    width: 100%; /* Ensure the image takes up full width of the card */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 150px; /* Limit image height */
+  }
+
+  .card-body {
+    width: 200px; /* Set the width of the card body */
+  }
+
+  /* Position the navigation arrows */
+  .slider-nav-prev,
+  .slider-nav-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent; /* Make the arrows transparent */
+    border: none; /* Remove the border */
+    outline: none; /* Remove the outline */
+    font-size: 24px; /* Adjust font size as needed */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: color 0.3s ease; /* Add transition effect for color change */
+  }
+
+  .slider-nav-prev {
+    left: 10px; /* Position left arrow */
+  }
+
+  .slider-nav-next {
+    right: 10px; /* Position right arrow */
+  }
+
+  /* Change arrow color on hover */
+  .slider-nav-prev:hover,
+  .slider-nav-next:hover {
+    color: #555; /* Change arrow color on hover */
+  }
+</style>
+
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="swiffy-slider slider-item-show2 slider-item-reveal slider-nav-outside slider-nav-round slider-nav-visible slider-indicators-outside slider-indicators-round slider-indicators-dark slider-nav-animation slider-nav-animation-fadein slider-item-last-visible">
+            <div class="slider-container-wrapper">
+              <ul class="slider-container py-4" id="dormitory-container">
+                  <!-- Dormitory items will be dynamically inserted here -->
+              </ul>
+            </div>
+
+            <button type="button" class="btn btn-default slider-nav slider-nav-prev" aria-label="Go left">&lt;</button>
+            <button type="button" class="btn btn-default slider-nav slider-nav-next" aria-label="Go right">&gt;</button>
+
+            <div class="slider-indicators">
+                <!-- Slider indicators will be dynamically inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+    // fetch dormitory from api endpoint
+    fetch('/dormitories/all/')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        const dormitoryContainer = document.getElementById('dormitory-container')
+        dormitoryContainer.innerHTML = '';   // clear previous content
+
+        // Loop through the data to create card elements
+        data.forEach((dorms) => {
+          const card = document.createElement('li');
+          card.className = 'slide-visible card';
+          card.innerHTML = `
+              <div class="card shadow">
+                <div class="ratio">
+                    <img src="${dorms.image}" class="card-img-top" loading="lazy" alt="...">
+                </div>
+                <div class="card-body p-3 p-xl-5">
+                    <h3 class="card-title h5">${dorms.name}</h3>
+                    <p class="card-text">Location: ${dorms.location.location}</p>
+                    <p class="card-text">Address: ${dorms.address}</p>
+                    <div><a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+          `;
+
+          // appending card to the container
+          dormitoryContainer.appendChild(card);
+        });
+
+        // Add event listeners to the navigation buttons
+        const prevButton = document.querySelector('.slider-nav-prev');
+        const nextButton = document.querySelector('.slider-nav-next');
+        const containerWrapper = document.querySelector('.slider-container-wrapper');
+
+        prevButton.addEventListener('click', () => {
+          containerWrapper.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+
+        nextButton.addEventListener('click', () => {
+          containerWrapper.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+      })
+      .catch( (err) => {
+        console.error('Error fetching dormitory data:', error);
+      });
+</script>
+
+{% endblock %}

@@ -16,8 +16,8 @@ class Dormitory(models.Model):
       image = models.ImageField(upload_to = 'dormitory/media/images')
       dormitory_type = models.CharField(choices=[('girls', 'Girls'), ('boys', 'Boys')], max_length=10)
       facilities = models.CharField(choices=[('super', 'Super'), ('regular', 'Regular')], max_length=20)
-      cost_per_night = models.IntegerField(default=0, blank=True)
-      cost_per_month = models.IntegerField(default=0, blank=True)
+      cost_per_night = models.DecimalField(default=0, blank=True, decimal_places=2, max_digits=10)
+      cost_per_month = models.DecimalField(default=0, decimal_places=2, max_digits=10,  blank=True)
       available_seats = models.IntegerField(default=0, blank=True)
       slug = models.SlugField(max_length = 60, unique=True)
       

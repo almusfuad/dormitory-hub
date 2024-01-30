@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Student(models.Model):
       user = models.OneToOneField(User, on_delete = models.CASCADE)
       image = models.ImageField(upload_to = 'student/media/images/')
+      # gender = models.CharField(max_length=5, blank=True, choices=[('M', 'Male'),('F', 'Female')])
       phone_no = models.CharField(max_length = 15)
       account_no = models.CharField(max_length = 8, unique=True)
       balance = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)

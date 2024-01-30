@@ -2,9 +2,17 @@ from django.shortcuts import render
 from rest_framework import views, viewsets, response, generics, mixins
 from . import models
 from . import serializers
-from .permissions import IsReviewOwner, IsStayed
+# from .permissions import IsReviewOwner, IsStayed
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
+
+# rendering home
+def home(request):
+      return render(request, 'dormitory/home.html')
+
 class LocationListView(views.APIView):
       def get(self, request, format = None):
             locations = models.Location.objects.all()
@@ -12,6 +20,7 @@ class LocationListView(views.APIView):
             return response.Response(serializer.data)
       
 class DormitoryListView(views.APIView):
+      
       def get(self, request, format=None):
             location_slug = self.request.query_params.get('location')
             dormitory_type = self.request.query_params.get('type')
@@ -37,41 +46,41 @@ class DormitoryListView(views.APIView):
 
             return response.Response(serializer.data)
       
-class DormitoryDetailsView(views.APIView):
-      def get(self, request, *args, **kwargs):
-            dormitory_id = kwargs.get('id')
-            dormitory = models.Dormitory.objects.get(id=dormitory_id)
-            serializer = serializers.DormitoryDetailsSerializer(dormitory)
-            return response.Response(serializer.data)
+# class DormitoryDetailsView(views.APIView):
+#       def get(self, request, *args, **kwargs):
+#             dormitory_id = kwargs.get('id')
+#             dormitory = models.Dormitory.objects.get(id=dormitory_id)
+#             serializer = serializers.DormitoryDetailsSerializer(dormitory)
+#             return response.Response(serializer.data)
       
-class DormitoryReviewListView(generics.ListAPIView):
-      serializer_class = serializers.ReviewSerializer
+# class DormitoryReviewListView(generics.ListAPIView):
+#       serializer_class = serializers.ReviewSerializer
       
-      def get_queryset(self):
-            dormitory_id = self.kwargs['id']
-            return models.Review.objects.filter(dormitory__id=dormitory_id)
+#       def get_queryset(self):
+#             dormitory_id = self.kwargs['id']
+#             return models.Review.objects.filter(dormitory__id=dormitory_id)
       
-class DormitoryReviewCreateView(generics.CreateAPIView):
-      serializer_class = serializers.ReviewSerializer
-      permission_classes = [IsStayed]
+# class DormitoryReviewCreateView(generics.CreateAPIView):
+#       serializer_class = serializers.ReviewSerializer
+#       permission_classes = [IsStayed]
       
-      def perform_create(self, serializer):
-            dormitory_id = self.kwargs.get('id')
-            dormitory = models.Dormitory.objects.get(id = dormitory_id)
-            user = self.request.user
-            serializer.save(reviewer = user, dormitory=dormitory)
+#       def perform_create(self, serializer):
+#             dormitory_id = self.kwargs.get('id')
+#             dormitory = models.Dormitory.objects.get(id = dormitory_id)
+#             user = self.request.user
+#             serializer.save(reviewer = user, dormitory=dormitory)
             
 
       
-class DormitoryReviewUpdateView(generics.RetrieveUpdateAPIView):
-      serializer_class = serializers.ReviewSerializer
-      permission_classes = [IsStayed]
-      lookup_field = 'id'
+# class DormitoryReviewUpdateView(generics.RetrieveUpdateAPIView):
+#       serializer_class = serializers.ReviewSerializer
+#       permission_classes = [IsStayed]
+#       lookup_field = 'id'
       
-      def get_queryset(self):
-            dormitory_id = self.kwargs['id']
-            return models.Review.objects.filter(dormitory__id = dormitory_id)
+#       def get_queryset(self):
+#             dormitory_id = self.kwargs['id']
+#             return models.Review.objects.filter(dormitory__id = dormitory_id)
       
-      def perform_update(self, serializer):
-            serializer.save(reviewer=self.request.user)
+#       def perform_update(self, serializer):
+#             serializer.save(reviewer=self.request.user)
       
