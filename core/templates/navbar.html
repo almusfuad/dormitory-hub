@@ -13,8 +13,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right" style="font-size: 16px;">
         <li><a href="#">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="">Profile</a></li>
+        <li><a href="{% url 'student:logout' %}">Logout</a></li>
+        {% else %}
         <li><a href="{% url 'student:login' %}">Login</a></li>
         <li><a href="{% url 'student:register' %}">Register</a></li>
+        {% endif %}
         <li><a href="#">Contact</a></li>
       </ul>
     </div><!--/.nav-collapse -->

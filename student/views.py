@@ -146,7 +146,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import StudentSerializer, RegistrationSerializer, LoginSerializer
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 # for email
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -244,10 +244,13 @@ class LoginApiView(APIView):
         serializer = LoginSerializer(data=request.data)
         
         if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+            print(username, password)
             user = authenticate(
                 request,
-                email = serializer.validated_data['email'],
-                password = serializer.validated_data['password']
+                username = username,
+                password = password,
             )
             if user is not None:
                 if user.is_active:
@@ -258,7 +261,14 @@ class LoginApiView(APIView):
                 else:
                     messages.error(request, 'Your account is not active.')
             else:
-                messages.error(request, "Invalid email or password.")
+                messages.error(request, "Invalid username or password.")
         else:
+            print(serializer.errors)
             messages.error(request, 'Invalid form submission.')
         return self.get(request)
+    
+def logout_view(request):
+    if request.method == 'GET':
+        logout(request)
+        messages.warning(request, "You have been logged out.")
+        return HttpResponseRedirect(reverse('student:login'))
