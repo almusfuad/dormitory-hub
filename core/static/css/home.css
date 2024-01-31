@@ -1,0 +1,67 @@
+.available-dormitories{
+      margin-top: 20px;
+      margin-left: 85px;
+}
+
+.dormitories-head {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: white;
+      display: flex;
+      flex-direction: column; /* or row, depending on the layout you want */
+      align-items: center;
+      justify-content: center;
+    }
+
+    #dormitory-container {
+      margin-left: -15px;
+      margin-right: -15px;
+    }
+  
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
+      background-color: rgba(203, 224, 230, 0.368); /* Background color for the card */
+      margin-bottom: 20px; /* Add margin at the bottom of each card */
+    }
+  
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+  
+    .card-img-top {
+      height: 200px; /* Adjust the height as needed */
+      width: 100%; /* Ensure the image width matches the card width */
+      object-fit: cover; /* Ensure the image covers the entire card */
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  
+    .card-body {
+      padding: 20px;
+    }
+  
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #dddddd; /* Change text color for better readability */
+    }
+  
+    .card-text {
+      font-size: 1rem;
+      color: #dddddd; /* Change text color for better readability */
+      margin-bottom: 10px;
+    }
+  
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+  
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }

@@ -10,7 +10,7 @@ class DormitoryListSerializer(serializers.ModelSerializer):
       location = LocationSerializer()
       class Meta:
             model = models.Dormitory
-            fields = ['id', 'name', 'location', 'image', 'dormitory_type', 'facilities']
+            fields = ['id', 'name', 'location', 'image', 'dormitory_type', 'facilities', 'address']
 
 class DormitoryDetailsSerializer(serializers.ModelSerializer):
       class Meta:
