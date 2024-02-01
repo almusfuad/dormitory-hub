@@ -17,50 +17,14 @@
 
 <div class="available-dormitories">
   <div class="dormitories-head">
-    <h1>Available Countries</h1>
-    <h5>It's our duty to make you comfortable and find home in country, where you want to stay. We have a visionize team will help you in every steps.</h5>
+    <h1>Available Dormitories</h1>
+    <h5>It's our duty to make you comfortable and find home in place, where you want to stay. We have a visionize team will help you in every steps.</h5>
   </div>
   <div class="row row-cols-1 row-cols-md-3 g-4" id="dormitory-container"></div>
 </div>
 
 
-
-
-<script>
-  // Fetch data from the API endpoint
-  fetch('/dormitories/all/')
-  .then(response => response.json())
-  .then(data => {
-    const dormitoryContainer = document.getElementById('dormitory-container');
-    
-    // Loop through the data to create card elements
-    data.forEach(dorm => {
-      // Create card element
-      const card = document.createElement('div');
-      card.classList.add('col-md-4');
-
-      // Create card content
-      card.innerHTML = `
-        <div class="card">
-          <img src="${dorm.image}" class="card-img-top" alt="Dormitory Image">
-          <div class="card-body">
-            <h5 class="card-title">${dorm.name}</h5>
-            <p class="card-text">Location: ${dorm.location.location}</p>
-            <p class="card-text">Address: ${dorm.address}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      `;
-
-      // Append card to dormitory container
-      dormitoryContainer.appendChild(card);
-    });
-
-        
-      })
-      .catch( (err) => {
-        console.error('Error fetching dormitory data:', error);
-      });
-</script>
+<!-- js files -->
+<script src="{% static 'js/home.js' %}"></script>
 
 {% endblock %}

@@ -1,11 +1,11 @@
 from django.db import models
-from student.models import BasicInformation
+from student.models import Student
 from dormitory.models import Dormitory
 from transaction.models import Transaction
 # Create your models here.
 
 class Booking(models.Model):
-      student = models.ForeignKey(BasicInformation, on_delete=models.CASCADE, name='student')
+      student = models.ForeignKey(Student, on_delete=models.CASCADE, name='student')
       dormitory = models.ForeignKey(Dormitory, on_delete=models.CASCADE, name='dormitory')
       date_of_booking = models.DateField(auto_now_add=True)
       date_of_checkin = models.DateField(null=True, default=None)

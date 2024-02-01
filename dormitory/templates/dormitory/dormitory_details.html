@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Details{% endblock %}
+{% block content %}
+<div class="details-container" >
+      <div id="details-container">
+            <div class="details-img">
+                  <img src="" alt="Dormitory Image">
+                  <button>Book Now</button>
+            </div>
+            <div class="details-text">
+                  <h2><strong>Dormitory Name</strong></h2>
+                  <div class="facilities-type">
+                        <h3><strong>Facilities: </strong>Super</h3>
+                        <h3><strong>Type: </strong>Girls</h3>
+                  </div>
+                  <h3><Strong>Address: </Strong>Kolkata, India</h3>
+                  <div class="costs">
+                        <h3><strong>Per Night: </strong>$ 3.89</h3>
+                        <h3><strong>Per Month: </strong>$ 90.00</h3>
+                  </div>
+                  <h3><strong>Available Seats: </strong>60</h3>
+            </div>
+      </div>
+</div>
+
+<script src="{% static 'js/details.js' %}"></script>
+{% endblock %}

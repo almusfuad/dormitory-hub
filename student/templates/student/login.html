@@ -1,33 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Login{% endblock %}
 {% block css %}
-<style>
-    .container-form {
-        max-width: 60%;
-        margin: auto;
-    }
-    h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #333;
-    }
-    .form-group {
-        margin-bottom: 20px;
-    }
-    .form-control {
-        border-radius: 5px;
-    }
-    .btn-primary {
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-weight: bold;
-        background-color: #007bff;
-        border: none;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 {% block content %}
 <div class="container-form">

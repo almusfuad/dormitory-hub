@@ -51,7 +51,7 @@ class BookingCreateView(generics.CreateAPIView):
             # dormitory = get_object_or_404(Dormitory, id=dormitory_id)
             
             booking_data = {
-                  'student': user.basicinformation.pk,
+                  'student': user.student.pk,
                   'dormitory': dormitory_id,
                   'status': 'booked',
                   'number_of_days': number_of_days,
@@ -72,9 +72,12 @@ class BookingCreateView(generics.CreateAPIView):
             return response.Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
 
 class BookingListCreateView(generics.ListCreateAPIView):
-      queryset = models.Booking.objects.all()
       serializer_class = serializers.BookingSerializer
       permission_classes = [permissions.IsAuthenticated]
+      
+      def get_queryset(self):
+            user = self.request.user
+            return models.Booking.objects.filter(student__user = user)
 
 class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
       queryset = models.Booking.objects.all()

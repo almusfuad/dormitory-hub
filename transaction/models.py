@@ -1,9 +1,9 @@
 from django.db import models
-from student.models import BasicInformation
+from student.models import Student
 
 # Create your models here.
 class Transaction(models.Model):
-      account = models.ForeignKey(BasicInformation, related_name='account', on_delete=models.CASCADE)
+      account = models.ForeignKey(Student, related_name='account', on_delete=models.CASCADE)
       amount = models.DecimalField(decimal_places=2, max_digits=10)
       transaction_type = models.CharField(choices=[('deposit', 'Deposit'), ('withdraw', 'Withdraw'), ('booking', 'Booking')], max_length=10)
       balance_after_transaction = models.DecimalField(decimal_places=2, max_digits=10, default=0)

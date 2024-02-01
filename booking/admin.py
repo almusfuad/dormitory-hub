@@ -4,9 +4,6 @@ from django.utils import timezone
 from . views import send_booking_status_email
 
 # Register your models here.
-
-
-
 class BookingAdmin(admin.ModelAdmin):
       list_display = ('student', 'dormitory', 'date_of_booking', 'date_of_checkin', 'date_of_checkout', 'status')
       list_filter = ('status',)

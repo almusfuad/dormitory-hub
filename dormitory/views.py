@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import views, viewsets, response, generics, mixins
+from rest_framework import views, viewsets, response, generics, mixins, status, filters
 from . import models
 from . import serializers
 # from .permissions import IsReviewOwner, IsStayed
@@ -10,8 +10,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 
 # rendering home
-def home(request):
-      return render(request, 'dormitory/home.html')
+# def home(request):
+#       return render(request, 'dormitory/home.html')
 
 class LocationListView(views.APIView):
       def get(self, request, format = None):
@@ -19,68 +19,22 @@ class LocationListView(views.APIView):
             serializer = serializers.LocationSerializer(locations, many = True)
             return response.Response(serializer.data)
       
-class DormitoryListView(views.APIView):
+class DormitoryViewSet(viewsets.ModelViewSet):
+      queryset = models.Dormitory.objects.all()
+      serializer_class = serializers.DormitoryListSerializer
+      filter_backends = [filters.SearchFilter]
+      search_fields = ['name', 'type', 'facilities', 'location__location', 'slug']
       
-      def get(self, request, format=None):
-            location_slug = self.request.query_params.get('location')
-            dormitory_type = self.request.query_params.get('type')
-            facilities = self.request.query_params.get('facilities')
+      def get_queryset(self):
+            queryset = super().get_queryset()
+            slug = self.request.query_params.get('slug')
 
-            # get all the dormitory list
-            dormitories = models.Dormitory.objects.all()
-
-            if location_slug:
+            if slug:
                   try:
-                        location = models.Location.objects.get(slug=location_slug)
-                        dormitories = dormitories.filter(location=location)
-                  except models.Location.DoesNotExist:
-                        return response.Response({'error': 'Location not found.'})
+                        dormitory = queryset.get(slug=slug)
+                        queryset = models.Dormitory.objects.filter(pk=dormitory.pk)
+                  except models.Dormitory.DoesNotExist:
+                        return response.Response({'error': 'Dormitory not found.'})
 
-            if dormitory_type:
-                  dormitories = dormitories.filter(dormitory_type=dormitory_type)
-
-            if facilities:
-                  dormitories = dormitories.filter(facilities=facilities)
-
-            serializer = serializers.DormitoryListSerializer(dormitories, many=True)
-
-            return response.Response(serializer.data)
-      
-# class DormitoryDetailsView(views.APIView):
-#       def get(self, request, *args, **kwargs):
-#             dormitory_id = kwargs.get('id')
-#             dormitory = models.Dormitory.objects.get(id=dormitory_id)
-#             serializer = serializers.DormitoryDetailsSerializer(dormitory)
-#             return response.Response(serializer.data)
-      
-# class DormitoryReviewListView(generics.ListAPIView):
-#       serializer_class = serializers.ReviewSerializer
-      
-#       def get_queryset(self):
-#             dormitory_id = self.kwargs['id']
-#             return models.Review.objects.filter(dormitory__id=dormitory_id)
-      
-# class DormitoryReviewCreateView(generics.CreateAPIView):
-#       serializer_class = serializers.ReviewSerializer
-#       permission_classes = [IsStayed]
-      
-#       def perform_create(self, serializer):
-#             dormitory_id = self.kwargs.get('id')
-#             dormitory = models.Dormitory.objects.get(id = dormitory_id)
-#             user = self.request.user
-#             serializer.save(reviewer = user, dormitory=dormitory)
-            
-
-      
-# class DormitoryReviewUpdateView(generics.RetrieveUpdateAPIView):
-#       serializer_class = serializers.ReviewSerializer
-#       permission_classes = [IsStayed]
-#       lookup_field = 'id'
-      
-#       def get_queryset(self):
-#             dormitory_id = self.kwargs['id']
-#             return models.Review.objects.filter(dormitory__id = dormitory_id)
-      
-#       def perform_update(self, serializer):
-#             serializer.save(reviewer=self.request.user)
+            return queryset
       
