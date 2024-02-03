@@ -105,6 +105,7 @@ class LoginApiView(APIView):
                 if user.is_active:
                     login(request, user)
                     token, _ = Token.objects.get_or_create(user=user)
+                    messages.success(request, "Login successful.")
                     return Response({'token': token.key}, status=status.HTTP_200_OK)
                 else:
                     messages.error(request, 'Your account is not active.')
