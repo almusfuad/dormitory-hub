@@ -105,8 +105,7 @@ class LoginApiView(APIView):
                 if user.is_active:
                     login(request, user)
                     token, _ = Token.objects.get_or_create(user=user)
-                    messages.success(request, "Login successful.")
-                    return Response({'message': 'Login successful.'}, status=status.HTTP_200_OK)
+                    return Response({'token': token.key}, status=status.HTTP_200_OK)
                 else:
                     messages.error(request, 'Your account is not active.')
                     return Response({'error': 'Your account is not active.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -117,12 +116,16 @@ class LoginApiView(APIView):
             messages.error(request, 'Invalid form submission.')
             return Response({'error': 'Invalid form submission.'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+class LogoutApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     
-def logout_view(request):
-    if request.method == 'GET':
+    def get(self, request, *args, **kwargs):
+        request.user.auth_token.delete()
         logout(request)
-        messages.warning(request, "You have been logged out.")
-        return Response({'message': 'You have been logged out.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'logged out successful.'}, status=status.HTTP_200_OK) 
+
     
     
 class ProfileViewSet(viewsets.ModelViewSet):
