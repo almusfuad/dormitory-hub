@@ -40,10 +40,16 @@ class LoginSerializer(serializers.Serializer):
       username = serializers.CharField(required=True)
       password = serializers.CharField(required=True)
       
+class UserSerializer(serializers.ModelSerializer):
+      class Meta:
+            model = User
+            fields = fields = ['username', 'first_name', 'last_name', 'email',]
+      
 class ProfileSerializer(serializers.ModelSerializer):
+      user = UserSerializer()
       student = StudentSerializer()
       
       class Meta:
             model = User
-            fields = ['username', 'first_name', 'last_name', 'email', 'student']
+            fields = ['user', 'student']
             
