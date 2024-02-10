@@ -40,7 +40,7 @@ class LoginSerializer(serializers.Serializer):
       username = serializers.CharField(required=True)
       password = serializers.CharField(required=True)
       
-class ProfileSerializer(serializers.Serializer):
+class ProfileSerializer(serializers.ModelSerializer):
       student = StudentSerializer()
       
       class Meta:
