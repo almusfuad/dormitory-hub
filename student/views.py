@@ -11,7 +11,7 @@ from django.contrib import messages
 # for template view
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.parsers import MultiPartParser, FormParser
-from .serializers import StudentSerializer, RegistrationSerializer, LoginSerializer
+from .serializers import StudentSerializer, RegistrationSerializer, LoginSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 from . import models
 from django.utils.text import slugify
@@ -133,8 +133,8 @@ class LogoutApiView(APIView):
     
 class ProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
-    serializer_class = StudentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ProfileSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:

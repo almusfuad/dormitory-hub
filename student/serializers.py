@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 class StudentSerializer(serializers.ModelSerializer):
       class Meta:
             model = Student
-            fields = ['user', 'image', 'phone_no', 'account_no', 'slug']
+            fields = ['image', 'phone_no', 'account_no', 'slug']
 
 class RegistrationSerializer(serializers.ModelSerializer):
       confirm_password = serializers.CharField(required=True)
@@ -39,4 +39,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
       username = serializers.CharField(required=True)
       password = serializers.CharField(required=True)
+      
+class ProfileSerializer(serializers.Serializer):
+      student = StudentSerializer()
+      
+      class Meta:
+            model = User
+            fields = ['username', 'first_name', 'last_name', 'email', 'student']
             
