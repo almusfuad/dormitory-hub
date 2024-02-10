@@ -132,6 +132,7 @@ class LogoutApiView(APIView):
     
     
 class ProfileViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
     serializer_class = StudentSerializer
     permission_classes = [permissions.IsAuthenticated]
     
