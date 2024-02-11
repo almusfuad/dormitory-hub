@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import models
 from . import serializers
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 
 # sending email
 from django.core.mail import EmailMultiAlternatives
@@ -20,6 +22,7 @@ def send_transaction_email(user, amount, subject, template):
 
 # Create your views here.
 class DepositWithdrawAPIView(APIView):
+      authentication_classes = [TokenAuthentication]
       permission_classes = [IsAuthenticated]
       
       def post(self, request, *args, **kwargs):
@@ -47,6 +50,7 @@ class DepositWithdrawAPIView(APIView):
             
             
 class TransactionViewset(viewsets.ReadOnlyModelViewSet):
+      authentication_classes = [TokenAuthentication]
       permission_classes = [IsAuthenticated]
       serializer_class = serializers.TransactionSerializer
       
