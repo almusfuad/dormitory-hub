@@ -61,3 +61,9 @@ class BookingSerializer(serializers.ModelSerializer):
             balance_after_transaction=student.balance,
         )
         return transaction
+    
+    
+class AllBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Booking
+        fields = '__all__'

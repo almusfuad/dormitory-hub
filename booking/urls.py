@@ -5,5 +5,5 @@ app_name = 'booking'
 
 urlpatterns = [
       path('create/', views.BookingCreateView.as_view(), name = 'booking-create'),
-      path('list/', views.BookingDetailView.as_view(), name = 'booking-list'),
+      path('permission/<slug:dormitory_slug>/', views.BookingPermissionView.as_view(), name = 'booking-permission'),
 ]

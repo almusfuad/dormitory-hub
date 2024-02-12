@@ -75,6 +75,26 @@ class BookingCreateView(generics.CreateAPIView):
             headers = self.get_success_headers(serializer.data)
             return response.Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
 
+class BookingPermission(generics.RetrieveAPIView):
+      serializer_class = serializers.BookingSerializer
+      authentication_classes = [TokenAuthentication]
+      permission_classes = [permissions.IsAuthenticated]
+      
+      def get_queryset(self):
+            user = self.request.user
+            dormitory_slug = self.kwargs['dormitory_slug']
+            return models.Booking.objects.filter(student__user = user, dormitory__slug=dormitory_slug)
+      
+      def retrieve(self, request, *args, **kwargs):
+            queryset = self.get_queryset()
+            if queryset.exists():
+                  return response.Response({'booking_exists': True})
+            else:
+                  return response.Response({'booking_exists': False})
+
+
+
+
 class BookingListCreateView(generics.ListCreateAPIView):
       serializer_class = serializers.BookingSerializer
       permission_classes = [permissions.IsAuthenticated]
