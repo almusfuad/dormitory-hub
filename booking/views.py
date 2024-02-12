@@ -6,6 +6,9 @@ from transaction.views import send_transaction_email
 from . import models
 from . import serializers
 
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+
 # email sending
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -22,6 +25,7 @@ def send_booking_status_email(user, status, subject, template):
 
 
 class BookingCreateView(generics.CreateAPIView):
+      authentication_classes = [TokenAuthentication]
       serializer_class = serializers.BookingSerializer
       permission_classes = [permissions.IsAuthenticated]
       
