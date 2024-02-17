@@ -4,9 +4,15 @@ from . import views
 
 app_name = 'dormitory'
 
-router = DefaultRouter()
-router.register('list', views.DormitoryViewSet, basename='dormitory')
+dormitory_router = DefaultRouter()
+dormitory_router.register('list', views.DormitoryViewSet, basename='dormitory')
+
+review_router = DefaultRouter()
+review_router.register('all', views.ReviewListViewSet, basename='review')
 
 urlpatterns = [
-      path('',include(router.urls)),
+      path('dormitories/',include(dormitory_router.urls)),
+      path('reviews/', include(review_router.urls)),
+      path('dormitories/<slug:dormitory_slug>/reviews/create/', views.ReviewCreateAPIView.as_view(), name = 'review_create'),
+      path('reviews/permission/<slug:dormitory_slug>/', views.CreateReviewPermissionAPIView.as_view(), name = 'create_permission'),     
 ]

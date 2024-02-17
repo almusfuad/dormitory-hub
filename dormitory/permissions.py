@@ -1,25 +1,29 @@
 from rest_framework import permissions
-# from booking.models import Booking
 
 
-class IsReviewOwner(permissions.BasePermission):
-      def has_object_permission(self, request, view, obj):
-            return obj.user == request.user
 
-
-# class IsStayed(permissions.BasePermission):
-#       message = "You must have a booking to create or update a review for this dormitory."
-#       def has_permission(self, request, view):
-#             if request.method == 'POST':
-#                   user = request.user
-#                   dormitory_id = view.kwargs.get('id')
-#                   print(f"dormitory id: {dormitory_id}")
-#                   if not dormitory_id:
-#                         return False
+class CanCreateReviewPermission(permissions.BasePermission):
+      def has_permission(self, request, view):
+            if request.method == 'POST':
+                  # get the dormitory slug from the request data or URL
+                  dormitory_slug = request.data.get('dormitory_slug') or request.GET.get('dormitory_slug')
                   
-#                   # check for the booking records of the user and dormitory
-#                   booking_exists = Booking.objects.filter(student__user = user, dormitory__id = dormitory_id).exists()
+                  # ensure that the dormitory_slug is provided
+                  if not dormitory_slug:
+                        return False
                   
-#                   return booking_exists
-#             return True
-            
+                  # get the user booking for the same dormitory 
+                  user_bookings = request.user.booking_set.filter(dormitory__slug = dormitory_slug)
+                  
+                  # if the user has any bookings for the same dormitory
+                  if user_bookings.exists():
+                        # get the first booking
+                        first_booking = user_bookings.first()
+                        
+                        # check if the booking status is checkedin or checkedout
+                        if first_booking.status in ['checkedin', 'checkedout']:
+                              
+                              # check the review that a user has already created a review for this dormitory
+                              existing_reviews_count = first_booking.dormitory.review_set.filter(reviewer = request.user).count()
+                              return existing_reviews_count == 0
+            return False
