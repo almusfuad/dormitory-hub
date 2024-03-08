@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_yasg',
     'core',
     'student',
     'dormitory',
@@ -88,7 +89,9 @@ ROOT_URLCONF = 'dormitory_hub.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            '/path/to/drf-yasg/templates',    
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

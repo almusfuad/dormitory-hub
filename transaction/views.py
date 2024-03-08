@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -6,6 +6,7 @@ from . import models
 from . import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from django.contrib.auth.models import AnonymousUser
 
 # sending email
 from django.core.mail import EmailMultiAlternatives
@@ -56,4 +57,16 @@ class TransactionViewset(viewsets.ReadOnlyModelViewSet):
       
       def get_queryset(self):
             user = self.request.user
+            if isinstance(user, AnonymousUser):
+                  return models.Transaction.objects.all()
             return models.Transaction.objects.filter(account__user = user)
+      
+      
+class TransactionListView(generics.ListAPIView):
+      serializer_class = serializers.TransactionSerializer
+      
+      def get_queryset(self):
+            if self.request.user.is_authenticated:
+                  return models.Transaction.objects.filter(account__user = self.request.user)
+            else:
+                  return models.Transaction.objects.none()
