@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import schema_view
+from .views import schema_view, swagger_ui_view
 
 
 urlpatterns = [
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name = 'schema-swagger-ui'),
+    path('', swagger_ui_view, name='swagger-ui'),
     path('admin/', admin.site.urls),
     path('user/', include('student.urls', namespace='student')),
     path('', include('dormitory.urls', namespace='dormitory')),

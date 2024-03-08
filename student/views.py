@@ -1,3 +1,7 @@
+# encapsulate
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 # For api view  
 from rest_framework.views import APIView
@@ -92,9 +96,10 @@ def activate(request, uid64, token):
     else:
         return JsonResponse({"error": "Invalid activation link or user does not exist."})
  
-  
-class LoginApiView(APIView):
 
+class LoginApiView(APIView):
+    
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         
@@ -130,7 +135,7 @@ class LogoutApiView(APIView):
         return Response({'message': 'logged out successful.'}, status=status.HTTP_200_OK) 
 
     
-    
+  
 class ProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
