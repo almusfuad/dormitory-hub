@@ -99,7 +99,6 @@ def activate(request, uid64, token):
 
 class LoginApiView(APIView):
     
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         

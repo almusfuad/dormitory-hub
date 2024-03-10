@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 # Create your models here.
 class Location(models.Model):
@@ -8,6 +11,19 @@ class Location(models.Model):
       
       def __str__(self):
             return self.location
+      
+@receiver(pre_save, sender=Location)
+def generate_unique_slug(sender, instance, *args, **kwargs):
+      if not instance.slug:
+            base_slug = slugify(instance.location)
+            slug = base_slug
+            num = 1
+            while Location.objects.filter(slug=slug).exists():
+                  slug = f"{base_slug}-{num}"
+                  num += 1
+            instance.slug = slug
+            
+
       
 class Dormitory(models.Model):
       name = models.CharField(max_length = 50)
