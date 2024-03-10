@@ -13,7 +13,7 @@ class Location(models.Model):
             return self.location
       
 @receiver(pre_save, sender=Location)
-def generate_unique_slug(sender, instance, *args, **kwargs):
+def generate_unique_location_slug(sender, instance, *args, **kwargs):
       if not instance.slug:
             base_slug = slugify(instance.location)
             slug = base_slug
@@ -39,6 +39,17 @@ class Dormitory(models.Model):
       
       def __str__(self):
             return f"{self.name} {self.location.location}"
+      
+@receiver(pre_save, sender=Dormitory)
+def generate_unique_dormitory_slug(sender, instance, *args, **kwargs):
+      if not instance.slug:
+            base_slug = slugify(instance.name)
+            slug = base_slug
+            num = 1
+            while Dormitory.objects.filter(slug=slug).exists():
+                  slug = f"{base_slug}-{num}"
+                  num += 1
+            instance.slug = slug
       
       
 class Review(models.Model):
