@@ -46,17 +46,8 @@ class SearchDormitory(generics.ListAPIView):
       pagination_class = CustomPagination
       filter_backends = [filters.SearchFilter]
       search_fields = ['name', 'facilities', 'location__location']
-      
-      # def get_queryset(self):
-      #       queryset = super().get_queryset()
-      #       search = self.request.query_params.get('search')
-      #       if search:
-      #             queryset = queryset.filter(
-      #                   Q(name__icontains=search) |
-      #                   Q(facilities__icontains=search) |
-      #                   Q(location__location__icontains=search)
-      #             ).order_by('id')
-      #       return queryset
+     
+     
       
 class CreateReviewPermissionAPIView(views.APIView):
       # authentication_classes = [authentication.TokenAuthentication]
