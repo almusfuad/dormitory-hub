@@ -11,6 +11,8 @@ class DormitoryListSerializer(serializers.ModelSerializer):
       class Meta:
             model = models.Dormitory
             fields = '__all__'
+            
+
 
 class DormitoryDetailsSerializer(serializers.ModelSerializer):
       class Meta:

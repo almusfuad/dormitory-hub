@@ -1,23 +1,23 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import views, viewsets, response, generics, mixins, status, filters, authentication, permissions
+from rest_framework import views, viewsets, response, generics, mixins, status, filters, authentication, permissions, pagination
 from .permissions import CanCreateReviewPermission
 from . import models
 from . import serializers
+from django.db.models import Q
 # from .permissions import IsReviewOwner, IsStayed
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import HttpResponse, HttpResponseRedirect
-
 from rest_framework.authentication import TokenAuthentication
 
-# Create your views here.
+class CustomPagination(pagination.PageNumberPagination):
+      page_size = 12
+      page_size_query_param = 'page_size'
+      max_page_size = 1000
 
-# rendering home
-# def home(request):
-#       return render(request, 'dormitory/home.html')
-
-class LocationListView(views.APIView):
+class LocationListView(generics.ListAPIView):
       def get(self, request, format = None):
+            pagination_class = CustomPagination
             locations = models.Location.objects.all()
             serializer = serializers.LocationSerializer(locations, many = True)
             return response.Response(serializer.data)
@@ -25,8 +25,7 @@ class LocationListView(views.APIView):
 class DormitoryViewSet(viewsets.ModelViewSet):
       queryset = models.Dormitory.objects.all()
       serializer_class = serializers.DormitoryListSerializer
-      filter_backends = [filters.SearchFilter]
-      search_fields = ['name', 'type', 'facilities', 'location__location', 'slug']
+      pagination_class = CustomPagination
       
       def get_queryset(self):
             queryset = super().get_queryset()
@@ -40,6 +39,24 @@ class DormitoryViewSet(viewsets.ModelViewSet):
                         return response.Response({'error': 'Dormitory not found.'})
 
             return queryset
+      
+class SearchDormitory(generics.ListAPIView):
+      queryset = models.Dormitory.objects.all()
+      serializer_class = serializers.DormitoryListSerializer
+      pagination_class = CustomPagination
+      filter_backends = [filters.SearchFilter]
+      search_fields = ['name', 'facilities', 'location__location']
+      
+      # def get_queryset(self):
+      #       queryset = super().get_queryset()
+      #       search = self.request.query_params.get('search')
+      #       if search:
+      #             queryset = queryset.filter(
+      #                   Q(name__icontains=search) |
+      #                   Q(facilities__icontains=search) |
+      #                   Q(location__location__icontains=search)
+      #             ).order_by('id')
+      #       return queryset
       
 class CreateReviewPermissionAPIView(views.APIView):
       # authentication_classes = [authentication.TokenAuthentication]
