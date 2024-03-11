@@ -14,6 +14,6 @@ urlpatterns = [
       path('dormitories/',include(dormitory_router.urls)),
       path('dormitories/search/', views.SearchDormitory.as_view(), name='dormitory_search'),
       path('reviews/', include(review_router.urls)),
-      path('dormitories/<slug:dormitory_slug>/reviews/create/', views.ReviewCreateAPIView.as_view(), name = 'review_create'),
-      path('reviews/permission/<slug:dormitory_slug>/', views.CreateReviewPermissionAPIView.as_view(), name = 'create_permission'),     
+      path('dormitories/<int:dormitory_id>/reviews/create/', views.ReviewCreateAPIView.as_view(), name = 'review_create'),
+      path('reviews/permission/<int:dormitory_id>/', views.CreateReviewPermissionAPIView.as_view(), name = 'create_permission'),     
 ]

@@ -16,8 +16,8 @@ from django.template.loader import render_to_string
 def send_booking_status_email(user, status, subject, template):
       # sending auto email to user
       message = render_to_string(template, {
-            'user': 'user',
-            'status': 'status',
+            'user': user,
+            'status': status,
       })
       send_email = EmailMultiAlternatives(subject, '', to = [user.email])
       send_email.attach_alternative(message, "text/html")
@@ -75,6 +75,7 @@ class BookingCreateView(generics.CreateAPIView):
             headers = self.get_success_headers(serializer.data)
             return response.Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
 
+
 class BookingPermission(generics.RetrieveAPIView):
       serializer_class = serializers.BookingSerializer
       authentication_classes = [TokenAuthentication]
@@ -93,11 +94,10 @@ class BookingPermission(generics.RetrieveAPIView):
                   return response.Response({'booking_exists': False})
 
 
-
-
-class BookingListCreateView(generics.ListCreateAPIView):
+class BookingListView(generics.ListAPIView):
       serializer_class = serializers.BookingSerializer
       permission_classes = [permissions.IsAuthenticated]
+      authentication_classes = [TokenAuthentication]
       
       def get_queryset(self):
             user = self.request.user

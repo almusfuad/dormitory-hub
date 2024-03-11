@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import views, viewsets, response, generics, mixins, status, filters, authentication, permissions, pagination
-from .permissions import CanCreateReviewPermission
 from . import models
 from . import serializers
+from booking.models import Booking
 from django.db.models import Q
 # from .permissions import IsReviewOwner, IsStayed
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -48,40 +48,55 @@ class SearchDormitory(generics.ListAPIView):
       search_fields = ['name', 'facilities', 'location__location']
      
      
-      
+
+# Section for reviews with permissions, create, update and list     
 class CreateReviewPermissionAPIView(views.APIView):
-      # authentication_classes = [authentication.TokenAuthentication]
-      permission_classes = [CanCreateReviewPermission]
+      authentication_classes = [authentication.TokenAuthentication]
+      permission_classes = [permissions.IsAuthenticated]
       
-      def get(self, request, format=True):
-            # Get the dormitory slug from the request data or URL
-            dormitory_slug = request.data.get('dormitory_slug') or request.GET.get('dormitory_slug')
+      def get(self, request, *args, **kwargs):
+            dormitory_id = kwargs.get('dormitory_id')
+            print(dormitory_id)
             
             # Ensure that the dormitory_slug is provided
-            if not dormitory_slug:
-                  return Response({"has_permission": False}, status=400)
+            if not dormitory_id:
+                  return Response({"has_permission": False, "detail": "Dormitory not found"}, status=400)
             
-            # check if the user has permission
-            permission = CanCreateReviewPermission()
-            has_permission = permission.has_permission(request, self)
             
-            return Response({"has_permission": has_permission}, status=200)
-      
-      
+            user = request.user
+            user_bookings = Booking.objects.filter(student__user = user, dormitory_id = dormitory_id)
+            
+            if user_bookings.exists():
+                  first_booking = user_bookings.first()
+                  
+                  if first_booking.status in ['checkedin', 'checkedout']:
+                        existing_reviews_count = first_booking.dormitory.review_set.filter(reviewer=user).count()
+                        if existing_reviews_count == 0:
+                              return response.Response({"has_permission": True}, status = status.HTTP_200_OK)
+                        else:
+                              return response.Response({"has_permission": False, "detail": "Can edit"})
+                  else:
+                        return response.Response({"has_permission": False, "detail": "User has not checked in to this dormitory"})
+            else:
+                  return response.Response({"has_permission": False, "detail": "User has not booked this dormitory"})
+            
 
 class ReviewCreateAPIView(generics.CreateAPIView):
       authentication_classes = [authentication.TokenAuthentication]
       permission_classes = [permissions.IsAuthenticated]
       serializer_class = serializers.ReviewSerializer
       
-      def perform_create(self, serializer):
-            dormitory_slug = self.kwargs.get('dormitory_slug')
-            dormitory = get_object_or_404(models.Dormitory, slug = dormitory__slug)
+      def create(self, request, *args, **kwargs):
+            dormitory_id= self.kwargs.get('dormitory_id')
+            print(dormitory_id)
             
-            serializer.save(
-                  dormitory = dormitory,
-                  reviewer = self.request.user
-            )
+            reviewer = self.request.user
+            print(reviewer)
+            
+            request.data['dormitory'] = dormitory_id
+            request.data['reviewer'] = reviewer.id
+            
+            return super().create(request, *args, **kwargs)
 
 
 class ReviewListViewSet(viewsets.ReadOnlyModelViewSet):
@@ -92,5 +107,7 @@ class ReviewListViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = models.Review.objects.all()
             dormitory_slug  = self.request.query_params.get('dormitory_slug')
             if dormitory_slug:
-                  queryset = queryset.filter(dormitory__slug = dormitory_slug)
+                  dormitory = get_object_or_404(models.Dormitory, slug = dormitory_slug)
+                  queryset = queryset.filter(dormitory_id = dormitory.id)
+                  
             return queryset
